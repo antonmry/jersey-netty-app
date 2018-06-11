@@ -1,0 +1,9 @@
+- [ ] Create the VM
+- [ ] Clone the tutorial 
+- [x] Update the README
+- [ ] Run the tutorial on the VM, adapt whatever it's needed
+- [ ] Change keyboard setting in VirtualBox image
+- [ ] Upload the image
+- [ ] Create presentation slides (use the Tutorial.md)
+- [ ] Copy the VMs to USB Drives
+- [ ] Upload the VM and send email (deadline: on Monday) 

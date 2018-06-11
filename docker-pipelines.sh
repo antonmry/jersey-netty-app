@@ -47,8 +47,8 @@ build ()
   # Depends on Step 3
   # Build the jlink'ed JDK 9 docker image using jersey-netty-app/target/jdk-9-alpine-linked
   # Depends on alpine image
-  docker build \
-    -t jdk-9-alpine-linked \
+docker build \
+-t jdk-9-alpine-linked \
     -f jdk-9-alpine-linked.Dockerfile .
 
 

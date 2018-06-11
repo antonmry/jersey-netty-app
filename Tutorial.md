@@ -44,18 +44,12 @@ Kubernetes, how to deploy Java applications and how to monitor those
 applications.  More importantly it should give an appreciation of how Java is
 used in cloud environments and how it can be improved.
 
-This tutorial will not explain how to set up a continuous delivery pipeline to
-automatically build and deploy the application to a Kubernetes cluster.  (See
-Oracle's recent acquisition of [Wercker][wercker].)  Nor explain how to perform
-rolling updates or rollbacks of the application.
-
 [kubernetes]: https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/
 [docker]: https://www.docker.com/what-docker
 [minikube]: https://github.com/kubernetes/minikube
 [prometheus]: https://prometheus.io/
 [helm]: https://github.com/kubernetes/helm
 [grafana]: https://grafana.com/
-[wercker]: http://blog.wercker.com/oracle
 
 ### Acknowledgements
 
@@ -68,63 +62,35 @@ This tutorial is dependent on running with minikube, if another Kubernetes
 execution mechanism is chosen some aspects may differ, especially those around
 obtaining IP addresses to interact with the Kubernetes cluster.
 
-### On Mac OS X
+### On Linux
 
-It is preferable to use a Mac system with 16GB of memory.  It is possible to use
-a Mac system with 8GB of memory but expect much swapping of memory, especially
-if an IDE such as IntelliJ is also running.
+    sudo dnf install docker
+    systemctl enable docker
+    systemctl start docker
 
-Minikube will run Kubernetes within a linux-based virtual machine on the host
-Mac system.  In turn minikube will require [Docker Machine][libmachine] running
-within the same virtual machine to manage it's own execution, and furthermore
-this will be required so we can create our Docker images that Kubernetes will
-deploy as Docker containers.
-
-We shall choose the [xhyve][xhyve] Hypervisor as our virtual machine platform
-and install both Docker Machine and xhyve using the
-[libmachine driver plugin][docker-xhyve] for xhyve. (xhyve is considered lighter
-weight than VirtualBox.)
-
-(Note: this area is rapidly changing, see the recent announcement of
-[LinuxKit][linuxkit], which over time is likely improve the experience of
-integrating Kubernetes, Docker and linux-based virtual machines running on a
-host system.)
-
-OS X 10.10.3 Yosemite or higher is required for xhyve (it may be possible to use
-an older version with VirtualBox but this has not been tested).
-
-Use the [brew][brew] packaging tool (Homebrew) to install the Docker Machine
-driver plugin for xhyve:
-
-    brew install docker-machine-driver-xhyve
-
-    # docker-machine-driver-xhyve need root owner and uid
-    sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-    sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-
-Use brew to install minikube, the kubernetes command line tool (kubectl), helm,
-and wrk (a HTTP benchmarking tool):
-
-    brew cask install minikube
-    brew install kubernetes-cli
-    brew install kubernetes-helm
-    brew wrk
-
-Executables will be placed in `/usr/local/bin`.
-
-Verify that minikube and docker can execute, such as follows:
-
-    $ minikube version
-    minikube version: v0.20.0
-    $ docker --version
-    Docker version 17.06.0-ce, build 02c1d87
-
-[brew]: https://brew.sh/
-[libmachine]: https://docs.docker.com/machine/overview/
-[xhyve]: https://github.com/mist64/xhyve
-[docker-xhyve]: https://github.com/zchee/docker-machine-driver-xhyve
-[openconnect]: http://www.infradead.org/openconnect/manual.html
-[linuxkit]: https://github.com/linuxkit/linuxkit
+    
+    curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+    
+    curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
+    
+    export MINIKUBE_WANTUPDATENOTIFICATION=false
+    export MINIKUBE_WANTREPORTERRORPROMPT=false
+    export MINIKUBE_HOME=$HOME
+    export CHANGE_MINIKUBE_NONE_USER=true
+    mkdir -p $HOME/.kube
+    touch $HOME/.kube/config
+    
+    export KUBECONFIG=$HOME/.kube/config
+    sudo -E ./minikube start --vm-driver=none
+    
+    # this for loop waits until kubectl can access the api server that Minikube has created
+    for i in {1..150}; do # timeout for 5 minutes
+       ./kubectl get po &> /dev/null
+       if [ $? -ne 1 ]; then
+          break
+      fi
+      sleep 2
+    done
 
 ## Running Kubernetes with minikube
 
@@ -799,8 +765,8 @@ container of the image `jdk-9-alpine`:
     docker run --rm \
       --volume $PWD:/jersey-netty-app \
       jdk-9-alpine \
-      jlink --module-path /opt/jdk-9/jmods \
-        --add-modules java.base,java.logging,java.management,java.xml,jdk.management,jdk.unsupported \
+      jlink --module-path /opt/java/openjdk/jdk-9\+181/jmods \
+        --add-modules java.base,java.management,java.xml,jdk.unsupported \
         --strip-debug \
         --compress 2 \
         --no-header-files \
