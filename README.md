@@ -9,5 +9,5 @@ The extensive [tutorial](https://github.com/PaulSandoz/jersey-netty-app/blob/mas
 - [x] eliminate problems derived from the environment
 - [x] update the tools used with the last versions
 
-You can follow the instructions in [this presentation](https://docs.google.com/presentation/d/1l04h6MLvHANFKYgBzDsSn6QAXpzAgyIW1OK-lVQtFLM/edit?usp=sharing) and the VM from [here](https://s3-eu-west-1.amazonaws.com/ayuste/Docker+in+Anger.zip).
+You can follow the instructions in [this presentation](https://docs.google.com/presentation/d/1l04h6MLvHANFKYgBzDsSn6QAXpzAgyIW1OK-lVQtFLM/edit?usp=sharing) and download the VM from [here](https://s3-eu-west-1.amazonaws.com/ayuste/Docker+in+Anger.zip).
 
