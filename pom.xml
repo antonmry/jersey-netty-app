@@ -13,7 +13,7 @@
     <description>Simple application using Jersey on Netty</description>
 
     <dependencies>
-        <!-- use version of Netty that works on Java 9 -->
+        <!-- use version of Netty that works on Java 11 -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
